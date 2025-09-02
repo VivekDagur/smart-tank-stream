@@ -2,6 +2,13 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Droplets, 
   Home, 
@@ -10,7 +17,15 @@ import {
   Settings, 
   LogOut,
   Menu,
-  User
+  User,
+  MoreHorizontal,
+  Activity,
+  TrendingUp,
+  Gauge,
+  Users,
+  FileText,
+  Bell,
+  Wrench
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -36,6 +51,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle }) => {
     ...(user?.role === 'admin' ? [{ to: '/admin', icon: Settings, label: 'Admin' }] : [])
   ];
 
+  const additionalMenuItems = [
+    { to: '/usage', icon: Activity, label: 'Usage Analytics' },
+    { to: '/metrics', icon: Gauge, label: 'Performance Metrics' },
+    { to: '/trends', icon: TrendingUp, label: 'Usage Trends' },
+    { to: '/community', icon: Users, label: 'Community' },
+    { to: '/maintenance', icon: Wrench, label: 'Maintenance' },
+    { to: '/notifications', icon: Bell, label: 'Notifications' },
+    { to: '/documentation', icon: FileText, label: 'Documentation' }
+  ];
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center px-4">
@@ -50,6 +75,47 @@ export const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle }) => {
             <Menu className="h-5 w-5" />
           </Button>
         )}
+
+        {/* Three-dot menu for additional navigation */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-3"
+            >
+              <MoreHorizontal className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56">
+            {additionalMenuItems.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.to;
+              
+              return (
+                <DropdownMenuItem
+                  key={item.to}
+                  className={cn(
+                    "cursor-pointer",
+                    isActive && "bg-accent text-accent-foreground"
+                  )}
+                  onClick={() => navigate(item.to)}
+                >
+                  <Icon className="mr-2 h-4 w-4" />
+                  <span>{item.label}</span>
+                </DropdownMenuItem>
+              );
+            })}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center space-x-3 mr-8">
